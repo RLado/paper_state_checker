@@ -11,7 +11,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 
 # Utilities
-import getpass
 import datetime
 import time 
 import configparser
@@ -58,10 +57,10 @@ def scraper(driver, url):
 
 if __name__=='__main__':
     # Argument parser
-    parser=argparse.ArgumentParser(description='Scrape a track your paper link and send updates via email')
+    parser = argparse.ArgumentParser(description='Scrape a track your paper link and send updates via email')
     parser._action_groups.pop()
-    required=parser.add_argument_group('required arguments')
-    optional=parser.add_argument_group('optional arguments')
+    required = parser.add_argument_group('required arguments')
+    optional = parser.add_argument_group('optional arguments')
 
     required.add_argument('-c','--config', type=str, help='Config file', required=True)
 
@@ -69,8 +68,8 @@ if __name__=='__main__':
 
     args=parser.parse_args()
 
-    #Read config file
-    config=configparser.ConfigParser()
+    # Read config file
+    config = configparser.ConfigParser()
     if os.path.isfile(args.config):
         config.read(args.config)
     else:
@@ -113,7 +112,7 @@ if __name__=='__main__':
                             config[p]['RECIPIENTS'].split(','),
                             f'{p}: paper tracker update', 
                             status
-                            )
+                        )
                         # Write new status
                         with open(p + '.txt', 'w') as f:
                             f.write(status)
@@ -131,14 +130,14 @@ if __name__=='__main__':
                             config[p]['RECIPIENTS'].split(','),
                             f'{p}: paper tracker subscription confirmation', 
                             status
-                            )
+                        )
             # Print log message
             print(f'Last check at: {str(datetime.datetime.now())}')
 
             # Quit the browser
             browser.close()
             browser.quit()
-            
+
             # Wait for next loop (10 min)
             for i in range(600):
                 time.sleep(1)
