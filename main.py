@@ -57,7 +57,7 @@ def scraper(driver, url):
 
 if __name__=='__main__':
     # Argument parser
-    parser = argparse.ArgumentParser(description='Scrape a track your paper link and send updates via email')
+    parser = argparse.ArgumentParser(description='Scrape a track your submission link and send updates via email')
     parser._action_groups.pop()
     required = parser.add_argument_group('required arguments')
     optional = parser.add_argument_group('optional arguments')
