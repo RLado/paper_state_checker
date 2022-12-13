@@ -22,7 +22,7 @@ import os
 def send_email(fromaddr,passwd,toaddr,subject,body):
     msg = MIMEMultipart()
     msg['From'] = fromaddr
-    msg['To'] = toaddr
+    #msg['To'] = toaddr
     msg['Subject'] = subject
     msg.attach(MIMEText(body, 'plain'))
     server = smtplib.SMTP('smtp.gmail.com', 587)
@@ -57,7 +57,7 @@ def scraper(driver, url):
     return None
 
 if __name__=='__main__':
-    #Argument parser
+    # Argument parser
     parser=argparse.ArgumentParser(description='Scrape a track your paper link and send updates via email')
     parser._action_groups.pop()
     required=parser.add_argument_group('required arguments')
@@ -75,27 +75,30 @@ if __name__=='__main__':
         config.read(args.config)
     else:
         raise FileNotFoundError('Could not load the configuration file.')
-
-    print(config.sections())
-    print(config['SMTP_AUTH']['USER'])
-    print(config['Paper_1']['LINK'])
-    print(config['Paper_1']['RECIPIENTS'].split(','))
-    exit()
-
-    url='https://track.authorhub.elsevier.com/?uuid=113968c5-1985-495c-855e-f75d8bbbc86e'
-
-    # Set firefox to headless mode
-    ffopt=webdriver.FirefoxOptions()
-    ffopt.headless=True
-    browser=webdriver.Firefox(options=ffopt)
     
+    # Main loop
     try:
         while True:
-            for p in config.sections:
+            #Read config file
+            if os.path.isfile(args.config):
+                config.read(args.config)
+            else:
+                raise FileNotFoundError('Could not load the configuration file.')
+            
+            # Set firefox to headless mode and start the browser
+            ffopt=webdriver.FirefoxOptions()
+            ffopt.headless=True
+            browser=webdriver.Firefox(options=ffopt)
+
+            # Scrape
+            for p in config.sections():
                 if p == 'SMTP_AUTH':
                     continue
-                # Scrape
+                
                 status = scraper(browser, config[p]['LINK'])
+                if status == None:
+                    print(f'ERROR: {p} did not yield any result!')
+                    continue
 
                 # Read last status and send notice if anything changed
                 if os.path.isfile(p + '.txt'):
@@ -131,14 +134,14 @@ if __name__=='__main__':
                             )
             # Print log message
             print(f'Last check at: {str(datetime.datetime.now())}')
+
+            # Quit the browser
+            browser.close()
+            browser.quit()
             
-            # Wait for next loop (15 min)
-            time.sleep(60) #60 sec for debugging
+            # Wait for next loop (10 min)
+            for i in range(600):
+                time.sleep(1)
+
     except KeyboardInterrupt:
-        #Quit the browser
-        browser.close()
-        browser.quit()
-
-        print('Clean shutdown')
-
-    
+        print('Done')
