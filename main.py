@@ -5,9 +5,6 @@ from email.mime.text import MIMEText
 
 # For web scraping
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 
 # Utilities
@@ -19,6 +16,21 @@ import os
 
 
 def send_email(fromaddr,passwd,toaddr,subject,body):
+    '''
+    Send a plain text email using gmail
+
+    Arguments:
+        fromaddr (str): Gmail sender address
+        passwd (str): Gmail password
+        toaddr (list): List of receiver addresses (str)
+        subject (str): Subject of the email
+        body (str): Body of the email
+    
+    Returns:
+        None
+
+    '''
+
     msg = MIMEMultipart()
     msg['From'] = fromaddr
     #msg['To'] = toaddr
@@ -33,6 +45,19 @@ def send_email(fromaddr,passwd,toaddr,subject,body):
     print('Email has been sent successfully')
 
 def scraper(driver, url):
+    '''
+    Scrapes submission tracking services for updates on a paper
+    
+    Arguments:
+        driver (selenium.webdriver): Handle for the webdriver object
+        url (str): Target URL string
+
+    Returns:
+        str/None: If scraping was successful returns a submission status string.
+            If the scrape was unsuccessful returns None.
+    
+    '''
+
     # - For elsevier:
     if 'elsevier' in url:    
         # Go to the URL
@@ -54,6 +79,7 @@ def scraper(driver, url):
         return status_str
     
     return None
+
 
 if __name__=='__main__':
     # Argument parser
