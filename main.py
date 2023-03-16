@@ -70,7 +70,10 @@ def scraper(driver, url):
         #driver.save_screenshot('screenshot.png')
         soup = BeautifulSoup(driver.page_source, 'html.parser')
         status_str = ''
-        status_str += soup.find(class_="lastupdate").text + '\n'
+        if soup.find(class_="lastupdate") != None:
+            status_str += soup.find(class_="lastupdate").text + '\n'
+        else:
+            status_str += ''
         status_str += soup.find(class_="statusstate").find('div').text + '\n'
         status_str += soup.find(class_="lastdate").find('div').text + '\n'
         for s in soup.find(class_="review-comments").find_all('li'):
